@@ -1,6 +1,7 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import generateToken from "../utils/generateToken.js";
 import User from "../models/userModel.js";
+import axios from "axios";
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
@@ -18,7 +19,6 @@ const authUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin,
     });
   } else {
     res.status(401);
@@ -30,8 +30,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  console.log(req.body.isAdmin);
-  const { name, email, password, isAdmin } = req.body;
+  const { name, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
 
@@ -39,22 +38,50 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("User already exists");
   }
+  let response;
+  try {
+    response = await axios.post(
+      "https://api.liveblocks.io/v2/authorize-user",
+      {
+        userId: email,
+        userInfo: {
+          name: name,
+          email: email,
+          avatar:
+            "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+        },
+        permissions: {
+          "my-room-*": ["room:read"],
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.LIVEBLOCKS_SECRET_KEY}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Error while authorizing user:", error);
+  }
+
+  // console.log(name, email, password, response.data.token);
 
   const user = await User.create({
     name,
     email,
     password,
-    isAdmin,
+    liveblocksToken: response.data.token,
   });
 
   if (user) {
+    // Handle Axios response
+
     generateToken(res, user._id);
 
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin,
     });
   } else {
     res.status(400);
@@ -81,7 +108,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin,
     });
   } else {
     res.status(404);
@@ -109,21 +135,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
-      isAdmin: updatedUser.isAdmin,
     });
   } else {
     res.status(404);
     throw new Error("User not found");
   }
-});
-
-// @desc    Get all users
-// @route   GET /api/users
-// @access  Private/Admin
-const getUsers = asyncHandler(async (req, res) => {
-  // only send email, name, and isAdmin
-  const users = await User.find({}).select(["email", "name", "isAdmin"]);
-  res.json(users);
 });
 
 // @desc    Delete user
@@ -133,53 +149,11 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    if (user.isAdmin) {
-      res.status(400);
-      throw new Error("Can not delete admin user");
-    }
     await User.deleteOne({ _id: user._id });
-    res.json({ message: "User removed" });
+    res.json({ message: "You have deleted your Account" });
   } else {
     res.status(404);
-    throw new Error("User not found");
-  }
-});
-
-// @desc    Get user by ID
-// @route   GET /api/users/:id
-// @access  Private/Admin
-const getUserById = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id).select("-password");
-
-  if (user) {
-    res.json(user);
-  } else {
-    res.status(404);
-    throw new Error("User not found");
-  }
-});
-// @desc    Update user
-// @route   PUT /api/users/:id
-// @access  Private/Admin
-const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.isAdmin = Boolean(req.body.isAdmin);
-
-    const updatedUser = await user.save();
-
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      isAdmin: updatedUser.isAdmin,
-    });
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+    throw new Error("Something is Wrong on Our Side. Please Try Again Later.");
   }
 });
 
@@ -189,8 +163,5 @@ export {
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  getUsers,
   deleteUser,
-  getUserById,
-  updateUser,
 };

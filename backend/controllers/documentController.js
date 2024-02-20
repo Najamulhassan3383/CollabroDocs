@@ -1,10 +1,17 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import Document from "../models/documentModel.js";
+import Project from "../models/projectModel.js";
+import axios from "axios";
 
 // Get documents by project
 export const getDocumentsByProject = asyncHandler(async (req, res, next) => {
-  console.log(req.params.id);
-  const documents = await Document.find({ project: req.params.id });
+  // console.log(req.params.id);
+  const documents = await Document.find({ project: req.body.projectId });
+  if (!documents) {
+    return res
+      .status(404)
+      .json({ success: false, message: "No documents found" });
+  }
   res.status(200).json({ success: true, data: documents });
 });
 
@@ -21,11 +28,51 @@ export const getDocument = asyncHandler(async (req, res, next) => {
 
 // Create a new document
 export const createDocument = asyncHandler(async (req, res, next) => {
+  // only the owner of the project can create a document in that project
   console.log(req.body);
+  const owner = req.user._id;
+  const projectId = req.body.projectId;
+
+  const project = await Project.findById(projectId);
+  if (!project) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Project not found" });
+  }
+  if (project.owner.toString() !== owner.toString()) {
+    return res.status(401).json({
+      success: false,
+      message: "You are unauthorized to create a document",
+    });
+  }
+  // console.log(req.body);
+  let response;
+  console.log(projectId, "project id");
+  try {
+    response = await axios.post(
+      `https://api.liveblocks.io/v2/rooms`,
+      {
+        id: `${projectId}-${req.body.title}`,
+        metadata: {
+          color: "blue",
+        },
+        defaultAccesses: ["room:write"],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.LIVEBLOCKS_SECRET_KEY}`,
+        },
+      }
+    );
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error while creating room:", error);
+  }
   const document = await Document.create({
     ...req.body,
-    projectId: req.params.projectId,
-    versions: [{ description: req.body.description }],
+    project,
+    owner: req.user._id,
+    roomId: response.data.id,
   });
 
   res.status(201).json({ success: true, data: document });

@@ -5,27 +5,28 @@ const ProjectSchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   description: {
-    type: String
+    type: String,
   },
   owner: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
-  collaborators: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    
-
-  }],
-  documents: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Document'
-  }]
-  
+  collaborators: [
+    {
+      // stores the id of the collaborator
+      type: Schema.Types.ObjectId,
+    },
+  ],
+  documents: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Document",
+    },
+  ],
 });
 
 const Project = mongoose.model("Project", ProjectSchema);

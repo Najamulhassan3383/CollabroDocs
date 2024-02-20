@@ -16,23 +16,16 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    isAdmin: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    role: {
+    liveblocksToken: {
       type: String,
       required: true,
-      default: false,
     },
-    project:{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project"
-    }
-  
-    
-    
+    ownedProjects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Project",
+      },
+    ],
   },
   {
     timestamps: true,

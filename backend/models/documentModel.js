@@ -1,24 +1,48 @@
 import mongoose from "mongoose";
 
-const versionSchema = mongoose.Schema({
-  description: {
-    type: String,
-  },}
-  ,{
+const versionSchema = mongoose.Schema(
+  {
+    document: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Document",
+      required: true,
+    },
+    state: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Document",
+      required: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  {
     timestamps: true,
   }
 );
 
+const Version = mongoose.model("Version", versionSchema);
 
 const documentSchema = mongoose.Schema(
   {
-    name: {
+    title: {
       type: String,
       required: true,
       unique: true,
     },
     description: {
       type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+    },
+    // room id from liveblock
+    roomId: {
+      type: String,
+      required: true,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -36,8 +60,24 @@ const documentSchema = mongoose.Schema(
       ref: "Project",
       required: true,
     },
-    versions: [versionSchema],
-    
+    readAccess: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    writeAccess: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    versions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Version",
+      },
+    ],
   },
   {
     timestamps: true,
@@ -46,5 +86,4 @@ const documentSchema = mongoose.Schema(
 
 const Document = mongoose.model("Document", documentSchema);
 
-
-export default Document
+export default Document;

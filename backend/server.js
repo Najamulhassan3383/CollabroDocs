@@ -2,9 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { WebSocketServer } from "ws";
-import { setupWSConnection } from "y-websocket/bin/utils";
-import http from "http";
 
 dotenv.config();
 import connectDB from "./config/db.js";
@@ -37,22 +34,6 @@ app.use("/api/documents", documentRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-// Create HTTP server
-const server = http.createServer(app);
-
-// Create WebSocket server
-const wss = new WebSocketServer({ noServer: true });
-
-// Handle WebSocket connections
-wss.on("connection", setupWSConnection);
-
-// Handle HTTP upgrades to WebSocket
-server.on("upgrade", (request, socket, head) => {
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit("connection", ws, request);
-  });
-});
-
-server.listen(port, () =>
+app.listen(port, () =>
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${port}`)
 );
