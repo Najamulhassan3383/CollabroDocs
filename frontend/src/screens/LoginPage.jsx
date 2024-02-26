@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -12,17 +11,13 @@ const LoginPage = () => {
 
   const [login, { isLoading }] = useLoginMutation();
 
-  const { userInfo } = useSelector((state) => state.auth);
-
-  const { search } = useLocation();
-  const sp = new URLSearchParams(search);
-  const redirect = sp.get("redirect") || "/";
   const onFinish = (values) => {
     login({ email: values.username, password: values.password })
       .unwrap()
       .then((data) => {
         dispatch(setCredentials(data));
-        navigate(redirect);
+        console.log("i am here");
+        navigate("/dashboard");
       })
       .catch((err) => {
         console.error(err);
@@ -35,11 +30,6 @@ const LoginPage = () => {
     console.log("Failed:", errorInfo);
   };
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate(redirect);
-    }
-  }, [navigate, redirect, userInfo]);
   return (
     <>
       <HeaderLandingPage />

@@ -9,13 +9,11 @@ import { useEffect } from "react";
 import { useGetProjectsQuery } from "../slices/projectSlice";
 import { useGetDocumentsQuery } from "../slices/documentsSlice";
 import { Outlet } from "react-router-dom";
-import Documents from "../components/Documents";
+// import Documents from "../components/Documents";
 
 export default function Dashboard() {
-  const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.auth);
-
   const { data, error, isLoading } = useGetProjectsQuery();
+  // console.log(data, error, isLoading);
 
   return (
     <>

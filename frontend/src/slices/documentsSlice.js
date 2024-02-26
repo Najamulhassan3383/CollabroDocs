@@ -3,7 +3,7 @@ import { apiSlice } from "./apiSlice";
 export const documentsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getDocuments: builder.query({
-      query: (id) => `/api/documents/${id}`,
+      query: (id) => `/api/documents/all/${id}`,
       providesTags: ["Documents"],
     }),
     getDocument: builder.query({
@@ -22,10 +22,10 @@ export const documentsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Documents"],
     }),
     updateDocument: builder.mutation({
-      query: ({ description, id }) => ({
+      query: ({ data, id }) => ({
         url: `/api/documents/${id}`,
         method: "PUT",
-        body: { description },
+        body: data,
       }),
       invalidatesTags: ["Documents"],
     }),
@@ -47,7 +47,7 @@ export const documentsApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetDocumentsQuery,
   useGetDocumentQuery,
-  useGetDocumentTokenQuery,
+
   useCreateDocumentMutation,
   useUpdateDocumentMutation,
   useDeleteDocumentMutation,

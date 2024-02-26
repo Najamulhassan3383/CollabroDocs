@@ -2,11 +2,12 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import Document from "../models/documentModel.js";
 import Project from "../models/projectModel.js";
 import axios from "axios";
-
+import { Version } from "../models/documentModel.js";
 // Get documents by project
 export const getDocumentsByProject = asyncHandler(async (req, res, next) => {
-  // console.log(req.params.id);
-  const documents = await Document.find({ project: req.body.projectId });
+  console.log(req.params.id, "for all documents");
+  const documents = await Document.find({ project: req.params.id });
+  console.log(documents, "documents");
   if (!documents) {
     return res
       .status(404)
@@ -17,7 +18,8 @@ export const getDocumentsByProject = asyncHandler(async (req, res, next) => {
 
 // Get a single document
 export const getDocument = asyncHandler(async (req, res, next) => {
-  const document = await Document.findById(req.params.documentId);
+  const document = await Document.findById(req.params.id);
+  console.log(req.params.id);
   if (!document) {
     return res
       .status(404)
@@ -75,6 +77,12 @@ export const createDocument = asyncHandler(async (req, res, next) => {
     roomId: response.data.id,
   });
 
+  //store the document _id to the project document array
+  const documents = project.documents || [];
+  documents.push(document._id);
+  project.documents = documents;
+  await project.save();
+
   res.status(201).json({ success: true, data: document });
 });
 
@@ -97,16 +105,33 @@ export const updateDocument = asyncHandler(async (req, res, next) => {
   console.log(req.params.id, "updating now");
 
   let document = await Document.findById(req.params.id);
-  console.log(document, "document");
+  // console.log(document, "document");
   if (!document) {
     return res
       .status(404)
       .json({ success: false, message: "Document not found" });
   }
 
-  document.description = req.body.description;
-  document.versions.push({ description: req.body.description });
+  // if there is content in the document, then push the  content to the Version model
+  let newVersion;
+  if (document.content) {
+    const version = new Version({
+      content: document.content,
+      document: document._id,
+      user: req.user._id,
+      timestamp: new Date(),
+    });
+    newVersion = await version.save();
+  }
 
+  document.description = req.body.description || document.description;
+  document.content = req.body.content || document.content;
+  document.title = req.body.title || document.title;
+  //push version id to the versions array
+  // console.log(newVersion, "new version");
+  if (newVersion) {
+    document.versions.push(newVersion._id);
+  }
   const updatedDocument = await document.save();
 
   res.status(200).json({ success: true, data: updatedDocument });

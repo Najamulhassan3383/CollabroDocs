@@ -8,6 +8,7 @@ export default function LandingPage() {
   const { userInfo } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
+  // check if the user is logged in
   useEffect(() => {
     if (userInfo) {
       navigate("/dashboard");

@@ -17,7 +17,17 @@ const createProject = asyncHandler(async (req, res) => {
     owner: owner._id,
   });
 
-  await project.save();
+  const createdNewProject = await project.save();
+  console.log(createdNewProject);
+
+  //find the owner and add the project to the owner's list of projects
+  const user = await User.findById(owner);
+  let ownedProjects = user.ownedProjects || [];
+
+  ownedProjects.push(createdNewProject._id);
+  user.ownedProjects = ownedProjects;
+
+  await user.save();
 
   res.status(201).json({
     success: true,
@@ -131,6 +141,7 @@ const removeCollaboratorFromProject = asyncHandler(async (req, res) => {
 const getProjectsByOwnerId = asyncHandler(async (req, res) => {
   const owner = req.user._id;
   const projects = await Project.find({ owner });
+  console.log("i am here");
 
   if (!projects) {
     return res.status(404).json({
@@ -187,22 +198,35 @@ const updateProject = asyncHandler(async (req, res) => {
 
 // Delete a project by ID
 const deleteProject = asyncHandler(async (req, res) => {
-  //only owner can delete the project
-  const owner = req.user._id;
-  const project = await Project.findByIdAndDelete(req.body.projectId);
+  console.log(req.body.projectId, "project id");
+  // Parse project ID to ensure it's a valid ObjectId
+  const projectId = req.body.projectId;
 
+  // Find project by ID
+  const project = await Project.findOne({
+    _id: projectId,
+    owner: req.user._id,
+  });
+
+  // If project is not found
   if (!project) {
     return res.status(404).json({
       success: false,
       message: "Project not found",
     });
   }
-  if (owner.toString() !== project.owner.toString()) {
-    return res.status(403).json({
-      success: false,
-      message: "Only the project owner can delete the project",
-    });
-  }
+
+  // Remove project from ownedProjects array in user document
+  const user = await User.findById(req.user._id);
+  user.ownedProjects = user.ownedProjects.filter(
+    (id) => id.toString() !== projectId.toString()
+  );
+  await user.save();
+
+  // Remove the project from projects collection
+  await Project.deleteOne({ _id: projectId });
+
+  // Respond with success message
   res.status(200).json({
     success: true,
     message: "Project deleted",

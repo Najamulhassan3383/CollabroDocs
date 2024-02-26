@@ -7,17 +7,18 @@ import LiveblocksProvider from "@liveblocks/yjs";
 import { useRoom } from "../../liveblocks.config";
 import { useCallback, useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css"; // for snow theme
+import { useUpdateDocumentMutation } from "../slices/documentsSlice";
 
 Quill.register("modules/cursors", QuillCursors);
 
 // Collaborative text editor with simple rich text, live cursors, and live avatars
-export function Editor() {
+export function Editor({ document, id }) {
   console.log("Editor");
   const room = useRoom();
-  const [text, setText] = useState("Loading…");
+  const [text, setText] = useState(document);
+  console.log("text", text);
   const [provider, setProvider] = useState(null);
 
-  // Set up Liveblocks Yjs provider
   useEffect(() => {
     const yDoc = new Y.Doc();
     const yText = yDoc.getText("quill");
@@ -35,10 +36,11 @@ export function Editor() {
     return null;
   }
 
-  return <QuillEditor yText={text} provider={provider} />;
+  return <QuillEditor yText={text} provider={provider} id={id} />;
 }
 
-function QuillEditor({ yText, provider }) {
+function QuillEditor({ yText, provider, id }) {
+  const [updateDocument, { isLoading, error }] = useUpdateDocumentMutation();
   console.log("QuillEditor props", { yText, provider });
   const reactQuillRef = useRef(null); // Use useRef instead of a string
   const toolbarOptions = [
@@ -61,6 +63,11 @@ function QuillEditor({ yText, provider }) {
 
     ["clean"], // remove formatting button
   ];
+  // handle save button click
+  const handleClick = useCallback(() => {
+    console.log(id, yText.toString(), "printing");
+    updateDocument({ data: { content: yText.toString() }, id });
+  }, [updateDocument, yText, id]);
   // Set up Yjs and Quill
   useEffect(() => {
     let quill;
@@ -80,18 +87,21 @@ function QuillEditor({ yText, provider }) {
   }, [yText, provider]);
 
   return (
-    <ReactQuill
-      placeholder="Start typing here…"
-      ref={reactQuillRef} // Assign the ref here
-      theme="snow"
-      modules={{
-        toolbar: toolbarOptions,
-        cursors: true,
-        history: {
-          // Local undo shouldn't undo changes from remote users
-          userOnly: true,
-        },
-      }}
-    />
+    <div>
+      <ReactQuill
+        placeholder="Start typing here…"
+        ref={reactQuillRef} // Assign the ref here
+        theme="snow"
+        modules={{
+          toolbar: toolbarOptions,
+          cursors: true,
+          history: {
+            // Local undo shouldn't undo changes from remote users
+            userOnly: true,
+          },
+        }}
+      />
+      <button onClick={handleClick}>Save</button>
+    </div>
   );
 }

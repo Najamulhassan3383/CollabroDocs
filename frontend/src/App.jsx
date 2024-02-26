@@ -9,6 +9,8 @@ import AdminRoute from "./components/AdminRoute";
 import EditScreen from "./screens/EditScreen";
 import Documents from "./components/Documents";
 import ProfilePage from "./screens/ProfilePage";
+import Component from "./screens/Dashboardv0";
+import MainDashboard from "./components/MainDashboard";
 
 export default function App() {
   const document = {
@@ -25,13 +27,15 @@ export default function App() {
           <Route path="/LoginPage" element={<LoginPage />} />
           <Route path="/SignUpPage" element={<SignUpPage />} />
           <Route path="" element={<AdminRoute />}>
-            <Route path="/dashboard" element={<Dashboard />}>
-              <Route path="/dashboard/project/:id" element={<Documents />} />
+            <Route path="/dashboard" element={<Component />}>
+              <Route
+                path="/dashboard/project/:id"
+                element={<MainDashboard />}
+              />
             </Route>
-            <Route path="/edit/:id" element={<EditScreen />} />
-            <Route path="/ProfilePage" element={<ProfilePage />} />
           </Route>
-          {/* <Route path="/" element={<EditScreen />} /> */}
+
+          <Route path="/edit/:documentId" element={<EditScreen />} />
         </Routes>
       </Router>
     </>

@@ -12,9 +12,9 @@ import {
 
 const router = express.Router();
 router.route("/").post(protect, createDocument);
-router.route("/:id").get(protect, getDocumentsByProject);
+router.route("/all/:id").get(protect, getDocumentsByProject);
 router.route("/:id").get(protect, getDocument);
-router.route("/:id").put(protect, admin, updateDocument);
+router.route("/:id").put(protect, updateDocument);
 router.route("/:id").delete(protect, admin, deleteDocument);
 router.route("/allversions/:id").get(protect, admin, getVersions);
 router.route("/previous/:id").get(protect, admin, getPreviousVersion);

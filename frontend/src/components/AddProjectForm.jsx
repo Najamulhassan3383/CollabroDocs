@@ -63,7 +63,7 @@ export function AddProjectForm({ setIsOpen }) {
             }}
           />
           <AutoComplete
-            data={users}
+            data={["najam", "faras", "ali", "ahmed"]}
             collaborators={collaborators}
             setCollaborators={setCollaborators}
           />

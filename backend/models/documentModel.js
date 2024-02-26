@@ -7,9 +7,8 @@ const versionSchema = mongoose.Schema(
       ref: "Document",
       required: true,
     },
-    state: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Document",
+    content: {
+      type: String,
       required: true,
     },
     user: {
@@ -23,7 +22,7 @@ const versionSchema = mongoose.Schema(
   }
 );
 
-const Version = mongoose.model("Version", versionSchema);
+export const Version = mongoose.model("Version", versionSchema);
 
 const documentSchema = mongoose.Schema(
   {

@@ -10,15 +10,10 @@ export const projectsApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5,
       providesTags: ["Projects"],
     }),
-    // getProjectDetails: builder.query({
-    //   query: (projectId) => ({
-    //     url: `/api/projects/${projectId}`,
-    //   }),
-    //   keepUnusedDataFor: 5,
-    // }),
+
     createProject: builder.mutation({
       query: (newProject) => ({
-        url: "/api/projects/create",
+        url: "/api/projects",
         method: "POST",
         body: newProject,
       }),
