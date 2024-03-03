@@ -59,4 +59,5 @@ export const {
   useUpdateDocumentMutation,
   useDeleteDocumentMutation,
   useGetPreviousVersionQuery,
+  useGetRoomTokenForDocumentQuery
 } = documentsApiSlice;

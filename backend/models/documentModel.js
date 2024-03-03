@@ -38,11 +38,7 @@ const documentSchema = mongoose.Schema(
     content: {
       type: Object,
     },
-    // room id from liveblock
-    roomId: {
-      type: String,
-      required: true,
-    },
+    
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

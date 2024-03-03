@@ -4,16 +4,15 @@ import FeaturesPage from "./screens/FeaturesPage";
 import AboutUs from "./screens/AboutUs";
 import LoginPage from "./screens/LoginPage";
 import SignUpPage from "./screens/SignUpPage";
-import Dashboard from "./screens/Dashboard";
+
 import AdminRoute from "./components/AdminRoute";
 import EditScreen from "./screens/EditScreen";
-import Documents from "./components/Documents";
+
 import ProfilePage from "./screens/ProfilePage";
 import Component from "./screens/Dashboardv0";
 import MainDashboard from "./components/MainDashboard";
 
 export default function App() {
-  
   return (
     <>
       <Router>

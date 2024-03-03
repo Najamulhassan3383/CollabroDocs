@@ -38,31 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("User already exists");
   }
-  let response;
-  try {
-    response = await axios.post(
-      "https://api.liveblocks.io/v2/authorize-user",
-      {
-        userId: email,
-        userInfo: {
-          name: name,
-          email: email,
-          avatar:
-            "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-        },
-        permissions: {
-          "my-room-*": ["room:read"],
-        },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.LIVEBLOCKS_SECRET_KEY}`,
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Error while authorizing user:", error);
-  }
+  
 
   // console.log(name, email, password, response.data.token);
 
@@ -70,7 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password,
-    liveblocksToken: response.data.token,
+    
   });
 
   if (user) {

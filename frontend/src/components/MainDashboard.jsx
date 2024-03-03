@@ -5,6 +5,8 @@ import { CardTitle, CardDescription } from "@/components/ui/card";
 import CardDashboard from "./CardDashboard";
 import { useParams, useLocation } from "react-router-dom";
 import { useGetDocumentsQuery } from "@/slices/documentsSlice";
+import { useState } from "react";
+import ColboratorModal from "./ColaboratorModal";
 
 const MainDashboard = () => {
   const { id } = useParams();
@@ -16,6 +18,15 @@ const MainDashboard = () => {
     error: documentsError,
     isLoading: documentsIsLoading,
   } = useGetDocumentsQuery(id);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Add a state variable for the modal
+
+  const handleEditClick = () => {
+    setIsModalOpen(true); // Open the modal when the Edit button is clicked
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false); // Close the modal
+  };
 
   return (
     <>
@@ -26,7 +37,7 @@ const MainDashboard = () => {
               <CardTitle>{project?.name}</CardTitle>
               <CardDescription>{project?.description}</CardDescription>
             </div>
-            <Button className="ml-auto" onClick={undefined} size="sm">
+            <Button className="ml-auto" onClick={handleEditClick} size="sm">
               Edit
             </Button>
           </div>
@@ -35,6 +46,12 @@ const MainDashboard = () => {
               <CardDashboard key={document._id} document={document} />
             ))}
           </div>
+
+          {isModalOpen && (
+            <Modal onClose={handleModalClose}>
+              <ColboratorModal onClose={handleModalClose} />
+            </Modal>
+          )}
         </>
       ) : (
         <p>Loading...</p>
@@ -44,3 +61,12 @@ const MainDashboard = () => {
 };
 
 export default MainDashboard;
+
+export const Modal = ({ onClose, children }) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="absolute inset-0 bg-black opacity-50" onClick={onClose} />
+      <div className="bg-white p-6 rounded shadow-lg z-10">{children}</div>
+    </div>
+  );
+};

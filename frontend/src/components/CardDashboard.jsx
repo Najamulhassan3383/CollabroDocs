@@ -25,7 +25,10 @@ const CardDashboard = ({ document }) => {
   };
 
   return (
-    <Card className="bg-[#f0f0f0] w-full" onClick={() => handleClick(document)}>
+    <Card
+      className="bg-[#f0f0f0] w-full cursor-pointer"
+      onClick={() => handleClick(document)}
+    >
       <CardHeader className="flex flex-row items-center gap-4">
         <BookOpenIcon className="w-8 h-8" />
         <div className="grid gap-1">

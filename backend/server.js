@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import LiveblockRouter from "./routes/liveBlockRoutes.js";
+
 
 dotenv.config();
 import connectDB from "./config/db.js";
@@ -27,8 +27,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-app.use("/api/liveblocks", LiveblockRouter);
 
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);

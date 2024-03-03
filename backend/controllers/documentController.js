@@ -1,7 +1,7 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import Document from "../models/documentModel.js";
 import Project from "../models/projectModel.js";
-import axios from "axios";
+
 import { Version } from "../models/documentModel.js";
 // Get documents by project
 export const getDocumentsByProject = asyncHandler(async (req, res, next) => {
@@ -47,34 +47,11 @@ export const createDocument = asyncHandler(async (req, res, next) => {
       message: "You are unauthorized to create a document",
     });
   }
-  // console.log(req.body);
-  let response;
-  console.log(projectId, "project id");
-  try {
-    response = await axios.post(
-      `https://api.liveblocks.io/v2/rooms`,
-      {
-        id: `${projectId}-${req.body.title}`,
-        metadata: {
-          color: "blue",
-        },
-        defaultAccesses: ["room:write"],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.LIVEBLOCKS_SECRET_KEY}`,
-        },
-      }
-    );
-    console.log(response.data);
-  } catch (error) {
-    console.error("Error while creating room:", error);
-  }
+
   const document = await Document.create({
     ...req.body,
     project,
     owner: req.user._id,
-    roomId: response.data.id,
   });
 
   //store the document _id to the project document array
@@ -86,21 +63,6 @@ export const createDocument = asyncHandler(async (req, res, next) => {
   res.status(201).json({ success: true, data: document });
 });
 
-// Update a document
-// export const updateDocument = asyncHandler(async (req, res, next) => {
-//   let document = await Document.findById(req.params.documentId);
-//   if (!document) {
-//     return res
-//       .status(404)
-//       .json({ success: false, message: "Document not found" });
-//   }
-//   document = await Document.findByIdAndUpdate(req.params.documentId, req.body, {
-//     new: true,
-//     runValidators: true,
-//   });
-
-//   res.status(200).json({ success: true, data: document });
-// });
 export const updateDocument = asyncHandler(async (req, res, next) => {
   console.log(req.params.id, "updating now");
 

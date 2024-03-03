@@ -16,10 +16,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    liveblocksToken: {
-      type: String,
-      required: true,
-    },
+
     ownedProjects: [
       {
         type: mongoose.Schema.Types.ObjectId,
