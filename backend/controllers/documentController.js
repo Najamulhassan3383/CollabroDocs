@@ -114,6 +114,7 @@ export const updateDocument = asyncHandler(async (req, res, next) => {
 
   // if there is content in the document, then push the  content to the Version model
   let newVersion;
+  console.log();
   if (document.content) {
     const version = new Version({
       content: document.content,
@@ -128,7 +129,7 @@ export const updateDocument = asyncHandler(async (req, res, next) => {
   document.content = req.body.content || document.content;
   document.title = req.body.title || document.title;
   //push version id to the versions array
-  // console.log(newVersion, "new version");
+  console.log(newVersion, "new version");
   if (newVersion) {
     document.versions.push(newVersion._id);
   }

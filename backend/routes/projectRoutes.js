@@ -10,12 +10,13 @@ import {
   addCollaboratorToProject,
   removeCollaboratorFromProject,
   getProjectsByOwnerId,
+  getAllProjects,
 } from "../controllers/projectController.js";
 
 const router = express.Router();
 router
   .route("/")
-  .get(protect, getProjectsByOwnerId)
+  .get(protect, getAllProjects)
   .post(protect, createProject)
   .put(protect, updateProject)
   .delete(protect, deleteProject);

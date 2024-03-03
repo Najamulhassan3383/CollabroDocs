@@ -36,7 +36,7 @@ const documentSchema = mongoose.Schema(
       required: true,
     },
     content: {
-      type: String,
+      type: Object,
     },
     // room id from liveblock
     roomId: {

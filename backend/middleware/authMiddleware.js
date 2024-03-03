@@ -4,10 +4,12 @@ import User from "../models/userModel.js";
 
 // User must be authenticated
 const protect = asyncHandler(async (req, res, next) => {
+  console.log("protect middleware");
   let token;
 
   // Read JWT from the 'jwt' cookie
   token = req.cookies.jwt;
+
   console.log(token);
 
   if (token) {

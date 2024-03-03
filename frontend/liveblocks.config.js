@@ -1,11 +1,34 @@
 import { createClient } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
 
+import { createClient } from "@liveblocks/client";
+import { BASE_URL } from "constants";
+
+// Passing custom headers and body to your endpoint
 const client = createClient({
-  publicApiKey:
-    "pk_dev_QfqnHVJc3gE7IzhFm76PjiAM4J5PprhHGrECHALSZOl5dZIlyFqN_oKozZidaScP",
-  // authEndpoint: "/api/auth",
-  throttle: 100,
+  authEndpoint: async (room) => {
+    const headers = {
+      // Custom headers
+      // ...
+
+      "Content-Type": "application/json",
+    };
+
+    const body = JSON.stringify({
+      // Custom body
+      // ...
+
+      room,
+    });
+
+    const response = await fetch(`${BASE_URL}/api/liveblocks`, {
+      method: "POST",
+      headers,
+      body,
+    });
+
+    return await response.json();
+  },
 });
 
 export const {

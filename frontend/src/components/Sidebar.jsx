@@ -39,7 +39,7 @@ const Sidebar = () => {
 
   return (
     <div className="border-r w-[230px] md:w-[300px] mt-5 py-4 bg-gray-100/40 dark:bg-gray-800/40">
-      {isLoading ? (
+      {isLoading || error ? (
         <div>Loading...</div>
       ) : (
         <>

@@ -232,6 +232,28 @@ const deleteProject = asyncHandler(async (req, res) => {
     message: "Project deleted",
   });
 });
+const getAllProjects = asyncHandler(async (req, res) => {
+  // the user must be either the owner or a collaborator to get the project
+  const user = req.user._id;
+  const projects = await Project.find({
+    $or: [{ owner: user }, { collaborators: user }],
+  });
+
+  if (!projects) {
+    return res.status(404).json({
+      success: false,
+      message: "No projects found",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    data: projects,
+  });
+
+  // console.log(projects);
+});
+  
 
 export {
   createProject,
@@ -240,4 +262,5 @@ export {
   addCollaboratorToProject,
   removeCollaboratorFromProject,
   getProjectsByOwnerId,
+  getAllProjects,
 };

@@ -12,6 +12,13 @@ export const documentsApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 5,
     }),
+    getRoomTokenForDocument: builder.query({
+      query: (room) => ({
+        url: "api/liveblocks",
+        body: room,
+        method: "POST",
+      }),
+    }),
 
     createDocument: builder.mutation({
       query: (newDocument) => ({

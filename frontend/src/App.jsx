@@ -13,10 +13,7 @@ import Component from "./screens/Dashboardv0";
 import MainDashboard from "./components/MainDashboard";
 
 export default function App() {
-  const document = {
-    title: "Document Title",
-    content: "This is my document , how are you doing today my name i faras?",
-  };
+  
   return (
     <>
       <Router>
@@ -36,6 +33,7 @@ export default function App() {
           </Route>
 
           <Route path="/edit/:documentId" element={<EditScreen />} />
+          <Route path="/test" element={<EditScreen />} />
         </Routes>
       </Router>
     </>
