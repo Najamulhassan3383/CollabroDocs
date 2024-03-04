@@ -28,6 +28,7 @@ export default function App() {
                 path="/dashboard/project/:id"
                 element={<MainDashboard />}
               />
+              <Route path="/dashboard/profile" element={<ProfilePage />} />
             </Route>
           </Route>
 

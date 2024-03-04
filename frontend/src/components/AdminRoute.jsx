@@ -14,18 +14,7 @@ import { useLogoutMutation } from "../slices/usersApiSlice";
 // };
 
 const AdminRoute = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [logout, { isLoading }] = useLogoutMutation();
   const { userInfo } = useSelector((state) => state.auth);
-  const hanldelogout = () => {
-    logout()
-      .unwrap()
-      .then((data) => {
-        dispatch(setCredentials(null));
-        navigate("/loginpage");
-      });
-  };
 
   return userInfo ? (
     <>

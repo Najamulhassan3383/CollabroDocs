@@ -38,7 +38,6 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("User already exists");
   }
-  
 
   // console.log(name, email, password, response.data.token);
 
@@ -46,7 +45,6 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password,
-    
   });
 
   if (user) {
@@ -97,6 +95,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
+  console.log(req.body);
+
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
@@ -105,13 +105,21 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       user.password = req.body.password;
     }
 
-    const updatedUser = await user.save();
+    try {
+      //update the existing user
 
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-    });
+      const updatedUser = await user.save();
+      console.log(updatedUser);
+
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+      });
+    } catch (error) {
+      res.status(500);
+      throw new Error("Error updating user: " + error.message);
+    }
   } else {
     res.status(404);
     throw new Error("User not found");
