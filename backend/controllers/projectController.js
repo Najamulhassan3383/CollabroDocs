@@ -250,8 +250,6 @@ const getAllProjects = asyncHandler(async (req, res) => {
     success: true,
     data: projects,
   });
-
-  // console.log(projects);
 });
   
 

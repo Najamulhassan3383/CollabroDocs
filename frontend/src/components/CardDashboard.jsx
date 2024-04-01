@@ -14,8 +14,20 @@ import {
 } from "@/components/ui/card";
 import { BookOpenIcon, MoreHorizontalIcon } from "@/components/icons/Icons";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Modal } from "./MainDashboard";
+import ColboratorModal from "./ColaboratorModal";
 
 const CardDashboard = ({ document }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false); // Add a state variable for the modal
+
+  const handleEditClick = () => {
+    setIsModalOpen(true); // Open the modal when the Edit button is clicked
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false); // Close the modal
+  };
   let title = document.title.substring(0, 20);
   let description = document.description.substring(0, 40);
   const navigate = useNavigate();
@@ -25,27 +37,22 @@ const CardDashboard = ({ document }) => {
   };
 
   return (
-    <Card
-      className="bg-[#f0f0f0] w-full cursor-pointer"
-      onClick={() => handleClick(document)}
-    >
+    <Card className="bg-[#f0f0f0] w-full cursor-pointer">
       <CardHeader className="flex flex-row items-center gap-4">
         <BookOpenIcon className="w-8 h-8" />
-        <div className="grid gap-1">
+        <div className="grid gap-1" onClick={() => handleClick(document)}>
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="ml-auto" size="icon" variant="ghost">
-              <MoreHorizontalIcon className="w-4 h-4" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>View Settings</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        <Button className="ml-auto" onClick={handleEditClick} size="sm">
+          Edit
+        </Button>
+        {isModalOpen && (
+          <Modal onClose={handleModalClose}>
+            <ColboratorModal onClose={handleModalClose} place={"Document"} />
+          </Modal>
+        )}
       </CardHeader>
       <CardContent className="grid gap-2">
         <div className="text-sm font-semibold">

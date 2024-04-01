@@ -7,6 +7,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { useGetDocumentsQuery } from "@/slices/documentsSlice";
 import { useState } from "react";
 import ColboratorModal from "./ColaboratorModal";
+import AddDocument from "./AddDocument";
 
 const MainDashboard = () => {
   const { id } = useParams();
@@ -19,9 +20,15 @@ const MainDashboard = () => {
     isLoading: documentsIsLoading,
   } = useGetDocumentsQuery(id);
   const [isModalOpen, setIsModalOpen] = useState(false); // Add a state variable for the modal
-
+  const [adddocumentmodal, setAddDocumentModal] = useState(false); // Add a state variable for the modal
   const handleEditClick = () => {
     setIsModalOpen(true); // Open the modal when the Edit button is clicked
+  };
+  const handleAddDocumentClick = () => {
+    setAddDocumentModal(true); // Open the modal when the Edit button is clicked
+  };
+  const handleCancelDocumentClick = () => {
+    setAddDocumentModal(false); // Open the modal when the Edit button is clicked
   };
 
   const handleModalClose = () => {
@@ -45,11 +52,23 @@ const MainDashboard = () => {
             {documentsData.data.map((document) => (
               <CardDashboard key={document._id} document={document} />
             ))}
+            <Button
+              className="fixed bottom-4 right-4"
+              onClick={handleAddDocumentClick}
+            >
+              Add Document
+            </Button>
           </div>
+          {/* add a + button for adding new documents */}
+          {adddocumentmodal && (
+            <Modal onClose={handleCancelDocumentClick}>
+              <AddDocument onClose={setAddDocumentModal} />
+            </Modal>
+          )}
 
           {isModalOpen && (
             <Modal onClose={handleModalClose}>
-              <ColboratorModal onClose={handleModalClose} />
+              <ColboratorModal onClose={handleModalClose} place={"Project"} />
             </Modal>
           )}
         </>

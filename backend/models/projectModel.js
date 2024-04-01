@@ -19,6 +19,7 @@ const ProjectSchema = new Schema({
     {
       // stores the id of the collaborator
       type: Schema.Types.ObjectId,
+      ref: "User",
     },
   ],
   documents: [

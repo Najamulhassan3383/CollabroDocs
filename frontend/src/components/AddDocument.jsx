@@ -1,45 +1,58 @@
-import React, { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-import AutoComplete from "./AutoComplete";
+import { Input } from "@/components/ui/input";
 
-function AddDocument({ documentId, setIsOpen }) {
-  const [textField1, setTextField1] = useState("");
+import { Label } from "@/components/ui/label";
+
+import { useState } from "react";
+
+function AddDocument({ onClose }) {
+  const [textField1, setTextField1] = useState("najam ul hassan");
   const [textField2, setTextField2] = useState("");
-
-  const handleSave = () => {
-    console.log(textField1, textField2);
-  };
+  console.log(textField1, textField2);
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-xl ">
-      <div className="p-4 gap-y-4">
-        <input
-          value={textField1}
-          onChange={(e) => setTextField1(e.target.value)}
-          className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none mb-2"
-          placeholder="Document Title"
-        />
-        <input
-          value={textField2}
-          onChange={(e) => setTextField2(e.target.value)}
-          className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none mb-2"
-          placeholder="Document Description"
-        />
-        <AutoComplete />
-        <div className="flex flex-row gap-x-2">
-          <button
-            onClick={handleSave}
-            className="w-full px-3 py-2 bg-green-600 text-white rounded-lg focus:outline-none"
-          >
-            Save
-          </button>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="w-full px-3 py-2 bg-red-600 text-white rounded-lg focus:outline-none"
-          >
-            Cancel
-          </button>
-        </div>
+    <div className="w-[400px]">
+      <Card>
+        <CardHeader>
+          <CardTitle>Add New Document</CardTitle>
+          <CardDescription>Add Document name and description.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="name">Document Name</Label>
+
+            <Input
+              label="name"
+              className="outline"
+              value={textField1}
+              onChange={(e) => {
+                setTextField1(e.target.value);
+              }}
+            />
+          </div>
+          <div className="space-y-2 mt-4">
+            <Label htmlFor="description">Add Document Description</Label>
+
+            <Input label="description" className="outline" />
+          </div>
+        </CardContent>
+      </Card>
+      <div className="flex justify-center mt-4 gap-4">
+        <Button variant="destructive" size="lg" onClick={() => onClose()}>
+          Cancel
+        </Button>
+        <Button variant="default" size="lg">
+          Save
+        </Button>
       </div>
     </div>
   );
