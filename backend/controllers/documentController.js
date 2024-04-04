@@ -76,7 +76,7 @@ export const updateDocument = asyncHandler(async (req, res, next) => {
 
   // if there is content in the document, then push the  content to the Version model
   let newVersion;
-  console.log();
+  // console.log();
   if (document.content) {
     const version = new Version({
       content: document.content,
